@@ -116,8 +116,10 @@ class UserAgreementPage_Controller extends Page_Controller {
 		// else let the user begin using the application
 		}else{
 			Session::clear('RequiresAgreement');
-			$this->setMessage('Success', 'Thank you, the agreement has been saved and you can now continue.');
-			return $this->redirect('home');                               	
+			if($this->hasExtension('ZenMessageExtension')){
+				$this->setMessage('Success', 'Thank you, the agreement has been saved and you can now continue.');	
+			}
+			return $this->redirect(Director::baseURL());                               	
 		}
     }
 }

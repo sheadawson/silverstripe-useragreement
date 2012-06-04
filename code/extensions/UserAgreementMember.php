@@ -58,4 +58,12 @@ class UserAgreementMember extends DataObjectDecorator {
 
 		return false;
 	}
+
+
+	/**
+	 * updateCMSFields
+	 **/
+	public function updateCMSFields($fields){
+		$fields->removeByName('SignedAgreements');
+	}
 }
