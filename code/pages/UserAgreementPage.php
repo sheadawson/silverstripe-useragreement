@@ -51,13 +51,13 @@ class UserAgreementPage_Controller extends Page_Controller {
 
 	/**
 	 * get's an agreement that is waiting to be signed by the user
+	 * - based on sort order 
 	 * @return UserAgreement object
 	 */
 	public function getAgreement(){
 		if(!$this->CurrentAgreement){
 			$member = $this->CurrentMember();
-			$groups = implode(',', $member->Groups()->getIDList());
-			$this->CurrentAgreement = DataObject::get_one('UserAgreement', "GroupID IN ($groups)");	
+			$this->CurrentAgreement = $member->unsignedAgreements()->First();
 		}
 		return $this->CurrentAgreement;
 	}
@@ -103,13 +103,18 @@ class UserAgreementPage_Controller extends Page_Controller {
      */
 	function agree($data, $form){
 		if(!isset($data['Agree'])){
-			$this->setMessage('Error', 'You must agree to the terms and conditions to continue');
+			if($this->hasExtension('ZenMessageExtension')){
+				$this->setMessage('Error', 'You must agree to the terms and conditions to continue');
+			}
 			return $this->redirectBack();
 		}
 
 		$member = $this->CurrentMember();
-		$member->SignedAgreements()->add($data['AgreementID']);
-
+		
+		if ($agreement = DataObject::get_by_id('UserAgreement',(int)$data['AgreementID'])) {
+			$agreement->addSignature($member);
+		}
+			
 		// there may be other agreements to sign for other groups this user is a member of
 		if($member->needsToSignAgreement()){
 			return $this->redirect($this->Link());
@@ -119,7 +124,7 @@ class UserAgreementPage_Controller extends Page_Controller {
 			if($this->hasExtension('ZenMessageExtension')){
 				$this->setMessage('Success', 'Thank you, the agreement has been saved and you can now continue.');	
 			}
-			return $this->redirect(Director::baseURL());                               	
+			return $this->redirect(Director::baseURL());
 		}
     }
 }
