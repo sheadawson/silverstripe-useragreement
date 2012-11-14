@@ -44,26 +44,28 @@ class UserAgreementMember extends DataObjectDecorator {
 		// are there any required agreements for this users groups?
 		$groups 	= $this->owner->Groups();
 		$groupIDs 	= implode(',', $groups->getIdList());
-		$requiredAgreements = DataObject::get('UserAgreement', "GroupID IN ($groupIDs)");
-		
-		$signedAgreements = $this->owner->SignedAgreements();
-		
 		$agreementsRemaining = new DataObjectSet();
+		
+		$requiredAgreements = DataObject::get('UserAgreement', "GroupID IN ($groupIDs)");
 				
 		// collect agreements to be signed - checking agreement type (one off vs session)
-		foreach($requiredAgreements as $required) {
-			if(!$signedAgreements->find('UserAgreementID', $required->ID)){
-				$agreementsRemaining->push($required);
-			} else {
-				if ($required->Type == 'Every Login') {
-					$signings = $this->owner->SignedAgreements("UserAgreementID='".$required->ID."'");
-					if (!$signings->find('SessionID',session_id())) {
-						$agreementsRemaining->push($required);
+		if ($requiredAgreements) {
+			$signedAgreements = $this->owner->SignedAgreements();
+			
+			foreach($requiredAgreements as $required) {
+				if(!$signedAgreements->find('UserAgreementID', $required->ID)){
+					$agreementsRemaining->push($required);
+				} else {
+					if ($required->Type == 'Every Login') {
+						$signings = $this->owner->SignedAgreements("UserAgreementID='".$required->ID."'");
+						if (!$signings->find('SessionID',session_id())) {
+							$agreementsRemaining->push($required);
+						}
 					}
 				}
 			}
+			$agreementsRemaining->sort('Sort','ASC');
 		}
-		$agreementsRemaining->sort('Sort','ASC');
 		
 		return $agreementsRemaining;
 	}
