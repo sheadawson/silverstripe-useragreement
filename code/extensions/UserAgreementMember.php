@@ -50,6 +50,8 @@ class UserAgreementMember extends DataObjectDecorator {
 				
 		// collect agreements to be signed - checking agreement type (one off vs session)
 		if ($requiredAgreements) {
+			//Flush the component cache - which causes the First Agreement for each Member to be shown twice on the first occurrence
+			$this->owner->flushCache();
 			$signedAgreements = $this->owner->SignedAgreements();
 			
 			foreach($requiredAgreements as $required) {
