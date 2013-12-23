@@ -14,10 +14,15 @@ class UserAgreementController extends Extension{
 	 * of their group before proceeding
 	 **/
 	public function onAfterInit(){
-		$member = $this->owner->CurrentMember();
+		$member = Member::currentUser();
 		if(	$member && Session::get('RequiresAgreement')){ // <-- set on user login
 			if($this->owner->class != 'Security' && $this->owner->class != 'RestrictedSecurityController' && $this->owner->ClassName != 'UserAgreementPage'){
-				$agreementPage = DataObject::get_one('UserAgreementPage');
+				if(class_exists('Multisites') && DataObject::get_one('Site')) {
+					$agreementPage = DataObject::get_one('UserAgreementPage', 'ParentID = ' . Multisites::inst()->getCurrentSiteId());
+				}
+				else {
+					$agreementPage = DataObject::get_one('UserAgreementPage');
+				}
 				return $this->owner->redirect($agreementPage->Link());
 			}	
 		}

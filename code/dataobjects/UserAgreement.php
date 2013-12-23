@@ -9,25 +9,25 @@
  **/
 class UserAgreement extends DataObject {
 
-	static $singular_name = "User Agreement";
-	static $plural_name = "User Agreements";
+	private static $singular_name = "User Agreement";
+	private static $plural_name = "User Agreements";
 	
-	static $db = array(
+	private static $db = array(
 		'Title' 	=> 'Varchar',
 		'Content' 	=> 'HTMLText',
 		'Type'		=> 'enum("Every Login, Once Only","Once Only")',
 		'Sort'		=> 'Int'
 	);
 
-	static $has_one = array(
+	private static $has_one = array(
 		'Group' => 'Group'
 	);
 	
-	static $has_many = array(
+	private static $has_many = array(
 		'Signatures'	=> 'UserAgreementSignature'
 	);
 	
-	static $summary_fields = array(
+	private static $summary_fields = array(
 		'Title'
 	);
 

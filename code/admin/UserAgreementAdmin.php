@@ -6,11 +6,11 @@
  * @author shea@silverstirpe.com.au
  **/
 class UserAgreementAdmin extends ModelAdmin {
-	public static $managed_models = array(
+	private static $managed_models = array(
 		'UserAgreement'
 	);
 	
-	public static $url_segment = 'user-agreements';
-	public static $menu_title = "User Agreements";
+	private static $url_segment = 'user-agreements';
+	private static $menu_title = "User Agreements";
 	
 }
