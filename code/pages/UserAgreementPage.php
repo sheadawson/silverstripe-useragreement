@@ -7,8 +7,8 @@
  **/
 class UserAgreementPage extends Page {
 
-	static $singular_name 	= "User Agreement Page";
-	static $plural_name 	= "User Agreement Pages";
+	private static $singular_name 	= "User Agreement Page";
+	private static $plural_name 	= "User Agreement Pages";
 
 	/**
 	 * Create default blog setup
@@ -17,14 +17,31 @@ class UserAgreementPage extends Page {
 		parent::requireDefaultRecords();
 		
 		if(!DataObject::get_one('UserAgreementPage')) {
-			$page = new UserAgreementPage();
-			$page->Title 		= "User Agreement";
-			$page->URLSegment 	= "user-agreement";
-			$page->Status 		= "Published";
-			$page->ShowInMenus 	= 0;
-			$page->write();
-			$page->publish("Stage", "Live");
-			DB::alteration_message("User Agreement Page Created","created");
+			if(class_exists('Site') && ($sites = Site::get())) {
+				if($sites->first()) {
+					foreach($sites as $site) {
+						$page = new UserAgreementPage();
+						$page->Title 		= "User Agreement";
+						$page->URLSegment 	= "user-agreement";
+						$page->Status 		= "Published";
+						$page->ShowInMenus 	= 0;
+						$page->ParentID = $site->ID;
+						$page->write();
+						$page->publish("Stage", "Live");
+						DB::alteration_message("User Agreement Page Created","created");
+					}
+				}
+			}
+			else {
+				$page = new UserAgreementPage();
+				$page->Title 		= "User Agreement";
+				$page->URLSegment 	= "user-agreement";
+				$page->Status 		= "Published";
+				$page->ShowInMenus 	= 0;
+				$page->write();
+				$page->publish("Stage", "Live");
+				DB::alteration_message("User Agreement Page Created","created");
+			}
 		}
 	}
 
@@ -40,7 +57,20 @@ class UserAgreementPage extends Page {
 }
 
 class UserAgreementPage_Controller extends Page_Controller {
-	
+
+	private static $allowed_actions = array(
+		'Form',
+		'agree'
+	);
+
+	public function index() {
+		if($this->getAgreement()) {
+			return array();
+		}
+		else {
+			return $this->redirect(Director::absoluteBaseURL());
+		}
+	}
 
 	/**
 	 * the current agreement to be signed / reviewed
@@ -56,7 +86,7 @@ class UserAgreementPage_Controller extends Page_Controller {
 	 */
 	public function getAgreement(){
 		if(!$this->CurrentAgreement){
-			$member = $this->CurrentMember();
+			$member = Member::currentUser();
 			$this->CurrentAgreement = $member->unsignedAgreements()->First();
 		}
 		return $this->CurrentAgreement;
@@ -67,9 +97,7 @@ class UserAgreementPage_Controller extends Page_Controller {
      * agreement content
      */
 	public function Content(){
-		if($agreement = $this->getAgreement()){
-			return $agreement->Content;
-		}
+		return $this->getAgreement()->Content;
 	}
 
 
@@ -87,12 +115,12 @@ class UserAgreementPage_Controller extends Page_Controller {
      * agreement form
      */
 	public function Form(){
-		$fields 	= new Fieldset(array(
+		$fields 	= new FieldList(array(
 			new CheckboxField('Agree', 'I Agree to the terms and conditions'),
 			new HiddenField('AgreementID', 'AgreementID', $this->getAgreement()->ID)
 		));
         $validator 	= new RequiredFields('Agree');
-        $actions 	= new FieldSet(new FormAction('agree', 'Submit'));
+        $actions 	= new FieldList(new FormAction('agree', 'Submit'));
         $form 		= new Form($this, 'Form', $fields, $actions, $validator);
         return $form;
 	}
@@ -109,7 +137,7 @@ class UserAgreementPage_Controller extends Page_Controller {
 			return $this->redirectBack();
 		}
 
-		$member = $this->CurrentMember();
+		$member = Member::currentUser();
 		
 		if ($agreement = DataObject::get_by_id('UserAgreement',(int)$data['AgreementID'])) {
 			$agreement->addSignature($member);
