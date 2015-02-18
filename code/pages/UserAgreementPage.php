@@ -152,7 +152,9 @@ class UserAgreementPage_Controller extends Page_Controller {
 			if($this->hasExtension('ZenMessageExtension')){
 				$this->setMessage('Success', 'Thank you, the agreement has been saved and you can now continue.');	
 			}
-			return $this->redirect(Director::baseURL() . Security::default_login_dest());
+			$redirect = Director::absoluteBaseURL();
+			$this->extend('updateAgreeSuccess', $redirect);
+			return $this->redirect($redirect);
 		}
     }
 }
