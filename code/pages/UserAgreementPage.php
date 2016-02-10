@@ -116,7 +116,7 @@ class UserAgreementPage_Controller extends Page_Controller {
      */
 	public function Form(){
 		$fields 	= new FieldList(array(
-			new CheckboxField('Agree', 'I Agree to the terms and conditions'),
+			new CheckboxField('Agree', $this->getAgreement()->AgreeText),
 			new HiddenField('AgreementID', 'AgreementID', $this->getAgreement()->ID)
 		));
         $validator 	= new RequiredFields('Agree');

@@ -16,9 +16,15 @@ class UserAgreement extends DataObject {
 		'Title' 	=> 'Varchar',
 		'Content' 	=> 'HTMLText',
 		'Type'		=> 'enum("Every Login, Once Only","Once Only")',
-		'Sort'		=> 'Int'
+		'Sort'		=> 'Int',
+		'AgreeText' => 'HTMLText',
+		'Archived'	=> 'Boolean'
 	);
 
+	private static $defaults = array(
+		'AgreeText' => 'I Agree to the terms and conditions'
+	);
+	
 	private static $has_one = array(
 		'Group' => 'Group'
 	);
@@ -36,7 +42,10 @@ class UserAgreement extends DataObject {
 		$fields->addFieldToTab('Root.Main', new TextField('Title'), 'GroupID');
 		$fields->addFieldToTab('Root.Main', new DropdownField('Type', 'Type', $this->dbObject('Type')->EnumValues(), $this->Type));
 		$fields->addFieldToTab('Root.Main', new TextField('Sort'));
+		$fields->addFieldToTab('Root.Main', new CheckboxField('Archived'));
 		$fields->addFieldToTab('Root.Main', new HTMLEditorField('Content'));
+		$fields->addFieldToTab('Root.Main', new HTMLEditorField('AgreeText'));
+		
 		return $fields;
 	}
 	

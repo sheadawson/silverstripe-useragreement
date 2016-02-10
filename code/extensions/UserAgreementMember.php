@@ -38,12 +38,12 @@ class UserAgreementMember extends DataExtension {
 	 **/
 	public function unsignedAgreements() {
 		// are there any required agreements for this users groups?
-		$groups 	= $this->owner->Groups();
-		$groupIDs 	= implode(',', $groups->getIdList());
+		$groupIDs 	= $this->owner->Groups()->getIdList();
 		$agreementsRemaining = new ArrayList();
 		
-		$requiredAgreements = $groupIDs ? DataObject::get('UserAgreement', "GroupID IN ($groupIDs)") : null;
-				
+		$requiredAgreements = $groupIDs ? UserAgreement::get()->filter('Archived',false)->filterAny('GroupID', $groupIDs) : null;
+		$this->owner->extend('updateRequiredAgreements', $requiredAgreements);
+
 		// collect agreements to be signed - checking agreement type (one off vs session)
 		if ($requiredAgreements) {
 			//Flush the component cache - which causes the First Agreement for each Member to be shown twice on the first occurrence
