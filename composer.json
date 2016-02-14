@@ -1,0 +1,29 @@
+{
+    "name": "sheadawson/silverstripe-useragreement",
+    "type": "silverstripe-module",
+    "description": "Make users sign a T&C agreement before using the website or application",
+    "keywords": [
+        "silverstripe",
+        "agreement",
+        "terms",
+        "conditions"
+    ],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Shea Dawson",
+            "email": "shea@livesource.co.nz"
+        }
+    ],
+    "require": {
+		"silverstripe/framework": "~3.1",
+		"silverstripe/cms": "~3.1"
+    },
+    "support": {
+        "issues": "https://github.com/sheadawson/silverstripe-useragreement/issues"
+    },
+    "extra": {
+        "installer-name": "useragreement"
+    },
+    "homepage": "https://github.com/sheadawson/silverstripe-useragreement"
+}
