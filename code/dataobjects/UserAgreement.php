@@ -34,8 +34,13 @@ class UserAgreement extends DataObject {
 	);
 	
 	private static $summary_fields = array(
-		'Title'
+		'Title' => 'Title',
+		'Archived.Nice' => 'Archived',
+		'Created.Nice' => 'Created'
 	);
+	
+	private static $default_sort = 'Sort DESC, Created DESC';
+	
 
 	public function getCMSFields(){
 		$fields = parent::getCMSFields();
@@ -45,7 +50,11 @@ class UserAgreement extends DataObject {
 		$fields->addFieldToTab('Root.Main', new CheckboxField('Archived'));
 		$fields->addFieldToTab('Root.Main', new HTMLEditorField('Content'));
 		$fields->addFieldToTab('Root.Main', new HTMLEditorField('AgreeText'));
-		
+				
+		$signatureGridfield = $fields->fieldByName("Root.Signatures.Signatures");
+		$config = $signatureGridfield->getConfig();
+		$config->removeComponentsByType('GridFieldAddExistingAutocompleter');
+		$config->removeComponentsByType('GridFieldAddNewButton');
 		return $fields;
 	}
 	

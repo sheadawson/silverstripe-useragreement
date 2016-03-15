@@ -24,8 +24,10 @@ class UserAgreementSignature extends DataObject {
 	);
 	
 	private static $summary_fields = array(
-		'DateAgreed',
-		'Member.Name'
+		'DateAgreed' => 'Date Agreed',
+		'Member.FirstName' => 'First Name',
+		'Member.Surname' => 'Surname',
+		'UserAgreement.Title' => 'Agreement'
 	);
 
 	public function getCMSFields(){
