@@ -52,9 +52,11 @@ class UserAgreement extends DataObject {
 		$fields->addFieldToTab('Root.Main', new HTMLEditorField('AgreeText'));
 				
 		$signatureGridfield = $fields->fieldByName("Root.Signatures.Signatures");
-		$config = $signatureGridfield->getConfig();
-		$config->removeComponentsByType('GridFieldAddExistingAutocompleter');
-		$config->removeComponentsByType('GridFieldAddNewButton');
+		if($signatureGridfield) {
+			$config = $signatureGridfield->getConfig();
+			$config->removeComponentsByType('GridFieldAddExistingAutocompleter');
+			$config->removeComponentsByType('GridFieldAddNewButton');
+		}
 		return $fields;
 	}
 	
